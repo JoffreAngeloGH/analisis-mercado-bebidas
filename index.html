@@ -1,0 +1,502 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<style>img{max-width:100%}[hidden]{display:none!important}</style>
+<title>Competencia de bebidas en Perú</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Inter:wght@400;500;600&display=swap">
+<style>
+/* Layout: columna de lectura de 1080px; fichas como bloques largos con capturas a todo el ancho y una banda de "bien / mal" por color semántico */
+:root{
+  --bg:#F4F5F7; --surface:#FFFFFF; --ink:#1B1D24; --muted:#5B6070; --line:#E1E3E9;
+  --accent:#6A2C70; --accent-soft:#F2E7F3;
+  --good:#1D7A52; --good-soft:#E2F2E9; --bad:#B23A2E; --bad-soft:#FAE8E5;
+  --display:"Bricolage Grotesque", "Segoe UI", system-ui, sans-serif;
+  --body:"Inter", "Segoe UI", system-ui, sans-serif;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#121318; --surface:#1B1D24; --ink:#ECEDF1; --muted:#A3A8B5; --line:#2D3039;
+  --accent:#D59BDF; --accent-soft:#2E2234; --good:#62C997; --good-soft:#163024; --bad:#F2907F; --bad-soft:#3A1F1B; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#121318; --surface:#1B1D24; --ink:#ECEDF1; --muted:#A3A8B5; --line:#2D3039;
+  --accent:#D59BDF; --accent-soft:#2E2234; --good:#62C997; --good-soft:#163024; --bad:#F2907F; --bad-soft:#3A1F1B; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.6;
+  padding-left:max(16px, env(safe-area-inset-left, 0px));padding-right:max(16px, env(safe-area-inset-right, 0px));padding-block:0 64px}
+.wrap{max-width:1080px;margin:0 auto}
+h1,h2,h3{font-family:var(--display);text-wrap:balance;line-height:1.15;margin:0}
+h1{font-size:clamp(2rem,5vw,3.2rem);font-weight:800;letter-spacing:-.02em}
+h2{font-size:clamp(1.5rem,3vw,2rem);font-weight:700;letter-spacing:-.01em}
+h3{font-size:1.15rem;font-weight:700}
+p{margin:0;max-width:68ch}
+a{color:var(--accent)}
+a:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.eyebrow{font-size:.75rem;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--accent)}
+header.top{padding-block:56px 32px;display:grid;gap:16px}
+header.top .lead{font-size:1.15rem;color:var(--muted)}
+.meta{font-size:.85rem;color:var(--muted)}
+section{padding-block:40px;border-top:1px solid var(--line);display:grid;gap:20px}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px}
+.stat{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:20px;display:grid;gap:6px;min-width:0}
+.stat b{font-family:var(--display);font-size:1.6rem;font-variant-numeric:tabular-nums}
+.stat span{color:var(--muted);font-size:.92rem}
+.note{background:var(--accent-soft);border-radius:12px;padding:18px 20px;display:grid;gap:6px}
+.note strong{color:var(--accent)}
+.tablebox{overflow-x:auto;border:1px solid var(--line);border-radius:12px;background:var(--surface)}
+table{border-collapse:collapse;width:100%;font-size:.88rem;font-variant-numeric:tabular-nums}
+th,td{text-align:left;padding:10px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-weight:600;color:var(--muted);font-size:.78rem;text-transform:uppercase;letter-spacing:.05em;white-space:nowrap}
+tr:last-child td{border-bottom:0}
+td.y{color:var(--good);font-weight:600}
+td.n{color:var(--muted)}
+.map svg{width:100%;height:auto;display:block}
+.map{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:16px}
+.toc{display:flex;flex-wrap:wrap;gap:8px}
+.toc a{text-decoration:none;color:var(--ink);background:var(--surface);border:1px solid var(--line);border-radius:999px;padding:6px 14px;font-size:.88rem}
+.toc a:hover{border-color:var(--accent);color:var(--accent)}
+.ficha{display:grid;gap:22px;padding-block:48px;border-top:1px solid var(--line)}
+.ficha-head{display:grid;gap:8px}
+.ficha-head h2 .n{color:var(--accent);margin-right:.35em}
+.tags{display:flex;flex-wrap:wrap;gap:8px}
+.tag{font-size:.78rem;border:1px solid var(--line);border-radius:999px;padding:3px 10px;color:var(--muted);background:var(--surface)}
+.tag.pay{border-color:var(--accent);color:var(--accent)}
+figure{margin:0;display:grid;gap:8px}
+figure img{width:100%;height:auto;border-radius:10px;border:1px solid var(--line);display:block;background:var(--surface)}
+figcaption{font-size:.85rem;color:var(--muted)}
+.block{display:grid;gap:10px}
+.block h3{font-size:1rem}
+.verdict{border-radius:14px;padding:20px;display:grid;gap:18px}
+.verdict.good{background:var(--good-soft)}
+.verdict.bad{background:var(--bad-soft)}
+.verdict > .label{font-family:var(--display);font-weight:700;font-size:1.05rem}
+.verdict.good > .label{color:var(--good)}
+.verdict.bad > .label{color:var(--bad)}
+.verdict .why{font-size:.95rem}
+.verdict .why b{font-weight:600}
+.cols{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px}
+.col{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:18px 20px;min-width:0}
+.col h3{font-size:.95rem;margin-bottom:8px}
+.col.plus h3{color:var(--good)}
+.col.minus h3{color:var(--bad)}
+ul{margin:0;padding-left:1.2em;display:grid;gap:6px}
+li{max-width:68ch}
+.checklist{list-style:none;padding:0}
+.checklist li::before{content:"☐ ";color:var(--accent)}
+footer{padding-top:32px;border-top:1px solid var(--line);font-size:.85rem;color:var(--muted);display:grid;gap:8px}
+@media (prefers-reduced-motion: reduce){*{scroll-behavior:auto}}
+html{scroll-behavior:smooth}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+<header class="top">
+  <span class="eyebrow">Análisis de mercado · Perú</span>
+  <h1>Bebidas para personas y empresas: quién compite y qué podemos hacer mejor</h1>
+  <p class="lead">En Perú, solo Purtuá vende bebidas propias a personas y a empresas con una marca bien armada. Las marcas de bebidas casi no atienden eventos, y los servicios para eventos no tienen una bebida propia. Ese espacio es la oportunidad.</p>
+  <p class="meta">10 negocios revisados · webs y capturas del 19 de noviembre de 2026 · no se contactó a los negocios</p>
+</header>
+
+<section id="resumen">
+  <div class="stats">
+    <div class="stat"><b>S/ 8.40 – 17.90</b><span>precio por botella o lata, de Gaudí a Purtuá. El pack de 4 o 6 es el formato más usado.</span></div>
+    <div class="stat"><b>5 carritos · 2 pasarelas</b><span>solo El Munkin y Veda cobran con tarjeta en la web. El resto cobra por Yape, Plin o transferencia.</span></div>
+    <div class="stat"><b>9 de 10</b><span>usan WhatsApp para vender o cotizar.</span></div>
+    <div class="stat"><b>1 de 10</b><span>publica un precio para empresas (Desayunos Perú, box de S/ 120).</span></div>
+  </div>
+  <div class="note">
+    <strong>Carrito no es lo mismo que pasarela de pago.</strong>
+    <p>Un carrito junta los productos y muestra el total. Una pasarela (Izipay, Mercado Pago, Culqi, Niubiz) cobra con tarjeta dentro de la web y confirma el pago al instante. Varios negocios tienen carrito pero cobran fuera de la web: el cliente paga por Yape y manda el comprobante por WhatsApp.</p>
+  </div>
+</section>
+
+<section id="contexto">
+  <span class="eyebrow">Contexto</span>
+  <h2>Tres tendencias que favorecen el modelo</h2>
+  <div class="tablebox"><table>
+    <thead><tr><th>Tendencia</th><th>Dato</th><th>Qué significa para la marca</th></tr></thead>
+    <tbody>
+      <tr><td>Crece el consumo de café</td><td>Unos 1.6 kg por persona al año, con meta de superar 2 kg al 2030 (<a href="https://agraria.pe/noticias/el-30-de-la-produccion-de-cafe-de-peru-se-destina-a-mercados-40892">Agraria</a>). Las tiendas de café de especialidad crecieron 11.5% entre 2019 y 2024 (<a href="https://forbes.pe/negocios/2025-04-24/el-boom-de-cafeterias-de-especialidad-en-peru-no-para-asi-se-reajustan-y-planean-seguir-creciendo/">Forbes Perú</a>).</td><td>Hay público para café frío y bebidas de café listas para tomar.</td></tr>
+      <tr><td>Bebidas listas para tomar</td><td>La categoría RTD creció 47% en volumen en 2025 según NielsenIQ, mientras las bebidas sin alcohol cayeron 1.1% (<a href="https://diariocorreo.pe/destacada/bebidas-listas-para-tomar-lideran-el-consumo-en-2025-la-categoria-que-mas-crece-en-peru-noticia/">Correo</a>). La nota no aclara si incluye alcohol.</td><td>El formato "abrir y tomar" es el que más crece.</td></tr>
+      <tr><td>Bebidas saludables</td><td>Las grandes embotelladoras invierten en bebidas funcionales y AJE reporta crecimiento de doble dígito (<a href="https://gestion.pe/economia/empresas/el-auge-de-las-gaseosas-saludables-y-funcionales-en-peru-como-coca-cola-grupo-aje-y-marcas-locales-transforman-el-mercado-noticia/">Gestión</a>).</td><td>Ingredientes naturales y menos azúcar son argumentos de venta.</td></tr>
+      <tr><td>Regalos corporativos</td><td>BigBox factura 70% a empresas, su segmento corporativo creció cerca de 55% en 2025 y la mitad de sus ventas cae entre octubre y diciembre (<a href="https://gestion.pe/economia/empresas/bigbox-acelera-su-estrategia-para-duplicar-el-peso-del-b2c-en-2026-como-lo-hara-noticia/">Gestión</a>).</td><td>Fin de año es la temporada clave para vender a empresas.</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<section id="mapa">
+  <span class="eyebrow">Mapa competitivo</span>
+  <h2>El cuadrante de bebida propia para empresas está casi vacío</h2>
+  <div class="map">
+    <svg viewBox="0 0 760 548" role="img" aria-label="Mapa competitivo de 10 negocios por público y tipo de oferta">
+      <rect x="430" y="80" width="290" height="210" fill="var(--accent)" opacity=".1"/>
+      <rect x="140" y="80" width="580" height="420" rx="8" fill="none" stroke="var(--muted)" stroke-width="1.25"/>
+      <line x1="430" y1="80" x2="430" y2="500" stroke="var(--line)" stroke-width="1.5"/>
+      <line x1="140" y1="290" x2="720" y2="290" stroke="var(--line)" stroke-width="1.5"/>
+      <g font-family="Inter, sans-serif" font-size="12" fill="var(--muted)" font-weight="600">
+        <text x="132" y="96" text-anchor="end">Bebida</text><text x="132" y="112" text-anchor="end">propia</text>
+        <text x="132" y="478" text-anchor="end">Servicio o</text><text x="132" y="494" text-anchor="end">regalo armado</text>
+        <text x="140" y="524">← Vende sobre todo a personas</text>
+        <text x="720" y="524" text-anchor="end">Vende sobre todo a empresas →</text>
+      </g>
+      <g font-family="Inter, sans-serif" font-size="12" fill="var(--muted)">
+        <text x="156" y="104">Marcas de bebidas para consumo</text>
+        <text x="156" y="484">Regalos para personas</text>
+        <text x="446" y="484">Servicios para eventos</text>
+      </g>
+      <text x="446" y="104" font-family="Inter, sans-serif" font-size="12" font-weight="600" fill="var(--accent)">Bebida propia para empresas</text>
+      <text x="446" y="120" font-family="Inter, sans-serif" font-size="12" fill="var(--accent)">espacio casi libre: la oportunidad</text>
+      <g font-family="Inter, sans-serif" font-size="14" fill="var(--ink)">
+        <circle cx="190" cy="150" r="5.5" fill="none" stroke="var(--muted)" stroke-width="1.5"/><text x="202" y="155">Gaudí</text>
+        <circle cx="220" cy="196" r="5.5" fill="none" stroke="var(--muted)" stroke-width="1.5"/><text x="232" y="201">Veda</text>
+        <circle cx="320" cy="214" r="5.5" fill="none" stroke="var(--muted)" stroke-width="1.5"/><text x="332" y="219">El Munkin</text>
+        <circle cx="380" cy="150" r="5.5" fill="none" stroke="var(--muted)" stroke-width="1.5"/><text x="392" y="155">OMC!</text>
+        <circle cx="540" cy="170" r="7" fill="var(--accent)"/><text x="554" y="175" font-weight="700">Purtuá</text>
+        <circle cx="400" cy="380" r="5.5" fill="none" stroke="var(--muted)" stroke-width="1.5"/><text x="388" y="385" text-anchor="end">Desayunos Perú</text>
+        <circle cx="490" cy="392" r="5.5" fill="none" stroke="var(--muted)" stroke-width="1.5"/><text x="502" y="397">Piscos Personalizados</text>
+        <circle cx="620" cy="340" r="5.5" fill="none" stroke="var(--muted)" stroke-width="1.5"/><text x="608" y="345" text-anchor="end">Hapi Coffee</text>
+        <circle cx="600" cy="424" r="5.5" fill="none" stroke="var(--muted)" stroke-width="1.5"/><text x="588" y="429" text-anchor="end">Fuel Bar</text>
+        <circle cx="690" cy="456" r="5.5" fill="none" stroke="var(--muted)" stroke-width="1.5"/><text x="678" y="461" text-anchor="end">Delicias Ali</text>
+      </g>
+    </svg>
+  </div>
+  <p class="meta">Posición aproximada de cada negocio, según lo que muestra su web.</p>
+</section>
+
+<section id="comparativa">
+  <span class="eyebrow">Comparativa</span>
+  <h2>Los 10 negocios, lado a lado</h2>
+  <div class="tablebox"><table>
+    <thead><tr><th>Negocio</th><th>Tipo</th><th>Dónde</th><th>Vende a</th><th>Precio de referencia</th><th>Cómo se pide</th><th>Cómo se cobra</th></tr></thead>
+    <tbody>
+      <tr><td><a href="https://purtua.com/">Purtuá</a></td><td>Marca de bebidas</td><td>Lima</td><td>Personas y empresas</td><td>S/ 14.90 – 17.90 la bebida</td><td>Carrito → WhatsApp</td><td>Yape manual con comprobante</td></tr>
+      <tr><td><a href="https://altercoffee.pe/omc/">OMC!</a></td><td>Marca de bebidas</td><td>Lima</td><td>Personas, mayoristas, empresas</td><td>S/ 75 el six pack</td><td>WhatsApp</td><td>Plin o transferencia</td></tr>
+      <tr><td><a href="https://elmunkincoffee.com/">El Munkin</a></td><td>Marca de café</td><td>Lima</td><td>Personas y oficinas</td><td>S/ 67 el pack de 4 cold brew</td><td>Carrito</td><td><b>Pasarela:</b> Mercado Pago, Yape, transferencia</td></tr>
+      <tr><td><a href="https://vedakombucha.pe/">Veda</a></td><td>Marca de bebidas</td><td>Lima</td><td>Personas</td><td>S/ 9.90 la botella</td><td>Carrito</td><td><b>Pasarela:</b> Izipay</td></tr>
+      <tr><td><a href="https://gaudi.pe/tienda">Gaudí</a></td><td>Marca de bebidas</td><td>Arequipa</td><td>Personas</td><td>S/ 50.40 el six pack</td><td>Carrito</td><td>Yape por QR con comprobante</td></tr>
+      <tr><td><a href="https://hapicoffee.pe/">Hapi Coffee</a></td><td>Servicio para eventos</td><td>Lima</td><td>Empresas y eventos sociales</td><td>No publica</td><td>WhatsApp</td><td>Se acuerda por WhatsApp</td></tr>
+      <tr><td><a href="https://fuelbar.pe/">Fuel Bar</a></td><td>Servicio para eventos</td><td>Lima</td><td>Eventos sociales y empresas</td><td>No publica</td><td>WhatsApp</td><td>Se acuerda por WhatsApp</td></tr>
+      <tr><td><a href="https://deliciasali.com/coffee-break-corporativo/">Delicias Ali</a></td><td>Catering</td><td>Lima</td><td>Empresas</td><td>No publica; mínimo 20 personas</td><td>WhatsApp</td><td>Se acuerda por WhatsApp</td></tr>
+      <tr><td><a href="https://www.desayunos.com.pe/">Desayunos Perú</a></td><td>Tienda de regalos</td><td>Lima</td><td>Personas y empresas</td><td>Desde S/ 67; box corporativo S/ 120</td><td>Carrito + WhatsApp</td><td>No se pudo confirmar</td></tr>
+      <tr><td><a href="https://piscospersonalizados.com/">Piscos Personalizados</a></td><td>Regalos personalizados</td><td>Lima</td><td>Personas y empresas</td><td>No publica</td><td>WhatsApp o formulario</td><td>Se acuerda con la asesora</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<section id="matriz">
+  <span class="eyebrow">Qué tiene cada web</span>
+  <h2>Nadie junta precios, carrito, empresas y prueba social</h2>
+  <div class="tablebox"><table>
+    <thead><tr><th>Negocio</th><th>Precios</th><th>Carrito</th><th>Pasarela</th><th>WhatsApp</th><th>Empresas</th><th>FAQ</th><th>Prueba social</th><th>Blog o guías</th></tr></thead>
+    <tbody>
+      <tr><td>Purtuá</td><td class="y">En pedidos</td><td class="y">Sí</td><td class="n">— Yape</td><td class="y">Sí</td><td class="y">Sí</td><td class="n">—</td><td class="y">Galería</td><td class="n">—</td></tr>
+      <tr><td>OMC!</td><td class="y">Sí</td><td class="n">—</td><td class="n">—</td><td class="y">Sí</td><td class="y">Mayorista</td><td class="y">Sí</td><td class="n">—</td><td class="n">—</td></tr>
+      <tr><td>El Munkin</td><td class="y">En rangos</td><td class="y">Sí</td><td class="y">Mercado Pago</td><td class="y">Sí</td><td class="y">Solo correo</td><td class="n">—</td><td class="n">—</td><td class="y">Sí</td></tr>
+      <tr><td>Veda</td><td class="y">Sí</td><td class="y">Sí</td><td class="y">Izipay</td><td class="y">Sí</td><td class="n">—</td><td class="y">Sí</td><td class="n">—</td><td class="n">—</td></tr>
+      <tr><td>Gaudí</td><td class="y">Sí</td><td class="y">Sí</td><td class="n">— Yape QR</td><td class="n">—</td><td class="n">—</td><td class="n">—</td><td class="n">—</td><td class="n">—</td></tr>
+      <tr><td>Hapi Coffee</td><td class="n">—</td><td class="n">—</td><td class="n">—</td><td class="y">Sí</td><td class="y">Sí</td><td class="n">—</td><td class="y">Logos</td><td class="n">—</td></tr>
+      <tr><td>Fuel Bar</td><td class="n">—</td><td class="n">—</td><td class="n">—</td><td class="y">Sí</td><td class="y">Sí</td><td class="n">—</td><td class="y">Testimonios</td><td class="n">—</td></tr>
+      <tr><td>Delicias Ali</td><td class="n">—</td><td class="n">—</td><td class="n">—</td><td class="y">Sí</td><td class="y">Sí</td><td class="y">Sí</td><td class="n">—</td><td class="y">Guías</td></tr>
+      <tr><td>Desayunos Perú</td><td class="y">Sí</td><td class="y">Sí</td><td class="n">¿?</td><td class="y">Sí</td><td class="y">Sí</td><td class="n">—</td><td class="n">—</td><td class="n">—</td></tr>
+      <tr><td>Piscos Personalizados</td><td class="n">—</td><td class="n">—</td><td class="n">—</td><td class="y">Sí</td><td class="y">Sí</td><td class="y">Sí</td><td class="y">Logos</td><td class="y">Sí</td></tr>
+    </tbody>
+  </table></div>
+  <p class="meta">"—" = no se vio en la web; puede que lo ofrezcan por otro canal.</p>
+</section>
+
+<section id="fichas">
+  <span class="eyebrow">Fichas</span>
+  <h2>Cada web, sección por sección</h2>
+  <p>Cada ficha muestra la portada, cómo vende, las secciones bien hechas y las que hay que mejorar, con capturas de escritorio.</p>
+  <nav class="toc" aria-label="Fichas">
+    <a href="#purtua">Purtuá</a><a href="#omc">OMC!</a><a href="#munkin">El Munkin</a><a href="#veda">Veda</a><a href="#gaudi">Gaudí</a><a href="#hapi">Hapi Coffee</a><a href="#fuel">Fuel Bar</a><a href="#delicias">Delicias Ali</a><a href="#desayunos">Desayunos Perú</a><a href="#piscos">Piscos Personalizados</a>
+  </nav>
+</section>
+
+<article class="ficha" id="purtua">
+  <div class="ficha-head">
+    <h2><span class="n">1</span>Purtuá</h2>
+    <div class="tags"><span class="tag">Marca de bebidas · Lima</span><span class="tag">Personas y empresas</span><span class="tag pay">Carrito sin pasarela · Yape</span><a class="tag" href="https://purtua.com/">purtua.com</a></div>
+  </div>
+  <figure><img src="img/purtua.png" alt="Portada de Purtuá" loading="lazy"><figcaption>Portada.</figcaption></figure>
+  <div class="block"><h3>Enfoque</h3><p>Bebidas premium "para momentos que importan". La portada le habla a los dos públicos con dos botones: "Elige tu bebida" y "Cotiza tu evento".</p></div>
+  <div class="block"><h3>Cómo vende</h3><p>La página de pedidos muestra el precio de cada bebida (S/ 14.90 a 17.90), filtros por línea y la base de leche. Se pide de 1 a 20 bebidas por la web; desde 4 van en bolsa térmica y desde 15 sugiere el servicio corporativo. Se puede programar fecha y hora. El carrito cierra con "Confirmar por WhatsApp" o "Pagar ahora con Yape": el cliente paga desde su app y manda el comprobante. El delivery se cotiza aparte.</p>
+    <figure><img src="img/purtua-pedido.jpg" alt="Página de pedidos de Purtuá con el carrito" loading="lazy"><figcaption>Página de pedidos: precios, horario, programación y los dos botones de cierre.</figcaption></figure></div>
+  <div class="verdict good"><span class="label">Bien hecho</span>
+    <figure><img src="img/purtua-packs.jpg" alt="Bloques de packs y Purtuá Corporate" loading="lazy"></figure>
+    <p class="why"><b>Un bloque para cada público, uno junto al otro.</b> "Arma tu pack" y "Purtuá Corporate", cada uno con su foto y su botón.</p>
+    <figure><img src="img/purtua-personaliza.jpg" alt="Personalización en 5 pasos" loading="lazy"></figure>
+    <p class="why"><b>La personalización en 5 pasos y 3 niveles.</b> Una empresa entiende en segundos qué puede pedir.</p>
+  </div>
+  <div class="verdict bad"><span class="label">Para mejorar</span>
+    <figure><img src="img/purtua-productos.jpg" alt="Grilla de bebidas sin precios" loading="lazy"></figure>
+    <p class="why"><b>Las bebidas de la portada no tienen precio ni botón de agregar,</b> y la sexta tarjeta queda cortada sin indicar que se puede deslizar.</p>
+    <figure><img src="img/purtua-vacio.jpg" alt="Secciones casi vacías" loading="lazy"></figure>
+    <p class="why"><b>Dos secciones casi vacías al final:</b> un "Coming soon" que no lleva a nada y un formulario de correo sin razón para suscribirse.</p>
+  </div>
+  <div class="cols">
+    <div class="col plus"><h3>Lo que nos aporta</h3><ul><li>El modelo completo: líneas con nombre, packs, corporativo y personalización por pasos.</li><li>Un flujo de pedido muy completo: filtros, mínimos y máximos, programación y horario.</li><li>Cobrar con Yape sin pasarela: sin comisión, aunque cada pago se confirma a mano.</li></ul></div>
+    <div class="col minus"><h3>Lo que no nos sirve</h3><ul><li>Esconder los precios fuera de la portada.</li><li>Su estética beige y serif: copiarla nos haría "otra Purtuá".</li><li>No tiene preguntas frecuentes ni contenido para Google.</li></ul></div>
+  </div>
+</article>
+
+<article class="ficha" id="omc">
+  <div class="ficha-head">
+    <h2><span class="n">2</span>OMC! (Oh My Coffee)</h2>
+    <div class="tags"><span class="tag">Marca de bebidas · Lima</span><span class="tag">Personas, mayoristas, empresas</span><span class="tag pay">Sin carrito · Plin o transferencia</span><a class="tag" href="https://altercoffee.pe/omc/">altercoffee.pe/omc</a></div>
+  </div>
+  <figure><img src="img/omc.png" alt="Portada de OMC" loading="lazy"><figcaption>Portada.</figcaption></figure>
+  <div class="block"><h3>Enfoque</h3><p>Un solo producto con mucha personalidad: cold brew con gas y frutos rojos en lata de 355 ml. "No es café, no es gaseosa."</p></div>
+  <div class="block"><h3>Cómo vende</h3><p>Six pack a S/ 75 y pack de 18 a S/ 210. Opción mayorista que se cotiza. Entrega en Lima en 24 a 48 horas (S/ 8 a 15) y a provincias por courier. Cada botón abre WhatsApp, y el pago se hace por Plin o transferencia.</p></div>
+  <div class="verdict good"><span class="label">Bien hecho</span>
+    <figure><img src="img/omc-packs.jpg" alt="Packs de OMC con precios" loading="lazy"></figure>
+    <p class="why"><b>Precios claros y opción para empresas en el mismo lugar.</b> Tres tarjetas: six pack, triple six ("mejor valor") y mayorista. El mejor ejemplo de cómo presentar packs.</p>
+    <figure><img src="img/omc-faq.jpg" alt="Preguntas frecuentes de OMC" loading="lazy"></figure>
+    <p class="why"><b>Preguntas frecuentes cortas</b> que responden lo que la gente pregunta por WhatsApp: envíos, pago, si venden por unidad.</p>
+  </div>
+  <div class="verdict bad"><span class="label">Para mejorar</span>
+    <figure><img src="img/omc-mapa.jpg" alt="Mapa con error de Google Maps" loading="lazy"></figure>
+    <p class="why"><b>El mapa de puntos de venta está roto:</b> muestra el error de Google Maps y la marca "For development purposes only", y los pines se amontonan. Una lista o un enlace habría bastado.</p>
+  </div>
+  <div class="cols">
+    <div class="col plus"><h3>Lo que nos aporta</h3><ul><li>Packs con precio, ahorro y opción mayorista.</li><li>Preguntas frecuentes útiles.</li><li>Una identidad que se reconoce al instante.</li></ul></div>
+    <div class="col minus"><h3>Lo que no nos sirve</h3><ul><li>Pensada para un solo producto.</li><li>Sin carrito, todo depende de WhatsApp.</li><li>Mapas embebidos mal configurados.</li></ul></div>
+  </div>
+</article>
+
+<article class="ficha" id="munkin">
+  <div class="ficha-head">
+    <h2><span class="n">3</span>El Munkin Coffee</h2>
+    <div class="tags"><span class="tag">Marca de café · Lima</span><span class="tag">Personas y oficinas</span><span class="tag pay">Carrito con pasarela · Mercado Pago</span><a class="tag" href="https://elmunkincoffee.com/">elmunkincoffee.com</a></div>
+  </div>
+  <figure><img src="img/munkin.png" alt="Portada de El Munkin" loading="lazy"><figcaption>Portada.</figcaption></figure>
+  <div class="block"><h3>Enfoque</h3><p>"Café peruano con propósito": parte de las ventas apoya la conservación del mono choro de cola amarilla.</p></div>
+  <div class="block"><h3>Cómo vende</h3><p>Tienda completa en WooCommerce. Pack de 4 cold brew a S/ 67, boxes de S/ 52 a S/ 145. Cobra dentro de la web con Mercado Pago (tarjeta), Yape o transferencia. Para empresas ofrece un plan cafetero mensual.</p></div>
+  <div class="verdict good"><span class="label">Bien hecho</span>
+    <figure><img src="img/munkin-mono.jpg" alt="Sección del mono choro" loading="lazy"></figure>
+    <p class="why"><b>Un propósito concreto y bien contado,</b> con datos, la alianza con un área de conservación y una foto real.</p>
+  </div>
+  <div class="verdict bad"><span class="label">Para mejorar</span>
+    <figure><img src="img/munkin-cafe.jpg" alt="Carrusel de cafés con rangos de precio" loading="lazy"></figure>
+    <p class="why"><b>Precios en rango sin decir el tamaño</b> y cuatro bolsas que se ven iguales.</p>
+    <figure><img src="img/munkin-trazabilidad.jpg" alt="Fotos sin explicación" loading="lazy"></figure>
+    <p class="why"><b>Cuatro fotos con título y sin explicación.</b> "Trazabilidad" u "Orgánico" no dicen nada concreto.</p>
+    <figure><img src="img/munkin-empresas.jpg" alt="Página para empresas" loading="lazy"></figure>
+    <p class="why"><b>La página para empresas es un párrafo y un correo:</b> sin mínimos, precios, formulario ni WhatsApp.</p>
+  </div>
+  <div class="cols">
+    <div class="col plus"><h3>Lo que nos aporta</h3><ul><li>Un propósito que da tema a la marca.</li><li>Boxes de bebida con accesorios para regalar.</li><li>Un plan mensual para oficinas.</li><li>Pasarela con tarjeta, Yape y transferencia.</li></ul></div>
+    <div class="col minus"><h3>Lo que no nos sirve</h3><ul><li>Una sección para empresas sin información.</li><li>Precios en rango sin explicar.</li><li>El diseño de plantilla.</li></ul></div>
+  </div>
+</article>
+
+<article class="ficha" id="veda">
+  <div class="ficha-head">
+    <h2><span class="n">4</span>Veda Kombucha</h2>
+    <div class="tags"><span class="tag">Marca de bebidas · Lima</span><span class="tag">Personas</span><span class="tag pay">Carrito con pasarela · Izipay</span><a class="tag" href="https://vedakombucha.pe/">vedakombucha.pe</a></div>
+  </div>
+  <figure><img src="img/veda.png" alt="Portada de Veda" loading="lazy"><figcaption>Portada. El título sobre la foto se lee mal.</figcaption></figure>
+  <div class="block"><h3>Enfoque</h3><p>"Disfruta el cambio hacia lo natural": kombucha como alternativa saludable. También vende pan sin gluten.</p></div>
+  <div class="block"><h3>Cómo vende</h3><p>Botella de 260 ml a S/ 9.90, cinco sabores, combos y suscripciones. Envío gratis desde S/ 56. Cobra con tarjeta en la web mediante Izipay. También está en Metro y Organa.</p></div>
+  <div class="verdict good"><span class="label">Bien hecho</span>
+    <figure><img src="img/veda-beneficios.jpg" alt="Qué es kombucha" loading="lazy"></figure>
+    <p class="why"><b>Explica el producto antes de venderlo,</b> con cuatro beneficios cortos alrededor de la botella.</p>
+    <figure><img src="img/veda-productos.jpg" alt="Tarjetas de producto" loading="lazy"></figure>
+    <p class="why"><b>Tarjetas limpias:</b> la botella del mismo tamaño en todas, el nombre con el volumen y el precio en color.</p>
+  </div>
+  <div class="verdict bad"><span class="label">Para mejorar</span>
+    <figure><img src="img/veda-nutricion.jpg" alt="Bloques de texto repetidos" loading="lazy"></figure>
+    <p class="why"><b>Tres bloques en zigzag que repiten la misma idea,</b> con texto gris claro difícil de leer.</p>
+  </div>
+  <div class="cols">
+    <div class="col plus"><h3>Lo que nos aporta</h3><ul><li>Aviso de envío gratis siempre visible.</li><li>Personas reales tomando la bebida.</li><li>Una segunda categoría sin perder foco.</li><li>Pasarela de tarjeta funcionando.</li></ul></div>
+    <div class="col minus"><h3>Lo que no nos sirve</h3><ul><li>Nada para empresas ni eventos.</li><li>Textos sin contraste.</li><li>Cuatro formas de pedir que confunden.</li></ul></div>
+  </div>
+</article>
+
+<article class="ficha" id="gaudi">
+  <div class="ficha-head">
+    <h2><span class="n">5</span>Gaudí</h2>
+    <div class="tags"><span class="tag">Marca de bebidas · Arequipa</span><span class="tag">Personas</span><span class="tag pay">Carrito sin pasarela · Yape QR</span><a class="tag" href="https://gaudi.pe/tienda">gaudi.pe</a></div>
+  </div>
+  <figure><img src="img/gaudi.png" alt="Tienda de Gaudí" loading="lazy"><figcaption>La tienda: precio y descuento en cada tarjeta.</figcaption></figure>
+  <div class="block"><h3>Enfoque</h3><p>Kombucha artesanal con mensaje nutracéutico. Solo six packs, en lata o botella.</p></div>
+  <div class="block"><h3>Cómo vende</h3><p>Six pack a S/ 50.40 (antes S/ 60): unos S/ 8.40 por unidad, el precio más bajo. El carrito calcula el envío con la ubicación GPS del cliente. Al final, el cliente paga con QR de Yape y adjunta el comprobante.</p>
+    <figure><img src="img/gaudi-carrito.jpg" alt="Carrito con ubicación GPS" loading="lazy"><figcaption>El carrito pide la ubicación para calcular el envío.</figcaption></figure>
+    <figure><img src="img/gaudi-pago.jpg" alt="Pago con Yape" loading="lazy"><figcaption>El último paso: datos y pago por QR de Yape.</figcaption></figure></div>
+  <div class="verdict good"><span class="label">Bien hecho</span>
+    <p class="why"><b>La tienda</b> (portada, arriba): precio, precio anterior y descuento en la misma tarjeta. <b>El envío por ubicación</b> evita mensajes preguntando si llegan.</p>
+  </div>
+  <div class="verdict bad"><span class="label">Para mejorar</span>
+    <figure><img src="img/gaudi-marca.jpg" alt="Bloque de marca genérico" loading="lazy"></figure>
+    <p class="why"><b>El único bloque de marca es genérico</b> y no cuenta quién hace la kombucha ni por qué elegirla. En el pago, <b>"Zona no disponible" aparece en rojo</b> antes de elegir la zona y parece un error.</p>
+  </div>
+  <div class="cols">
+    <div class="col plus"><h3>Lo que nos aporta</h3><ul><li>Precio y descuento en la tarjeta.</li><li>Envío calculado por ubicación.</li><li>Carrito con Yape sin pasarela.</li></ul></div>
+    <div class="col minus"><h3>Lo que no nos sirve</h3><ul><li>Una tienda sin historia.</li><li>Fotos básicas, sin ambiente.</li><li>Sin oferta para empresas.</li></ul></div>
+  </div>
+</article>
+
+<article class="ficha" id="hapi">
+  <div class="ficha-head">
+    <h2><span class="n">6</span>Hapi Coffee</h2>
+    <div class="tags"><span class="tag">Servicio para eventos · Miraflores</span><span class="tag">Empresas y eventos sociales</span><span class="tag pay">Sin carrito · se cotiza</span><a class="tag" href="https://hapicoffee.pe/">hapicoffee.pe</a></div>
+  </div>
+  <figure><img src="img/hapi.png" alt="Portada de Hapi Coffee" loading="lazy"><figcaption>Portada.</figcaption></figure>
+  <div class="block"><h3>Enfoque</h3><p>"Catering y barra de café para tu evento": carrito, máquina y barista para bodas, eventos corporativos y coffee breaks. Café de origen único de Huánuco.</p></div>
+  <div class="block"><h3>Cómo vende</h3><p>No publica precios. Arma cada propuesta según evento, invitados y presupuesto, y lo cotiza por WhatsApp. Una carta de referencia orienta sin comprometer precios.</p>
+    <figure><img src="img/hapi-menu.jpg" alt="Carta de referencia" loading="lazy"><figcaption>La carta de referencia.</figcaption></figure></div>
+  <div class="verdict good"><span class="label">Bien hecho</span>
+    <figure><img src="img/hapi-galeria.jpg" alt="Galería de eventos" loading="lazy"></figure>
+    <p class="why"><b>Galería de eventos reales con pie de foto</b> que nombra al cliente: Gloria, La Positiva.</p>
+    <figure><img src="img/hapi-marcas.jpg" alt="Logos de clientes" loading="lazy"></figure>
+    <p class="why"><b>Logos de clientes conocidos:</b> la prueba más rápida para una empresa que duda.</p>
+  </div>
+  <div class="verdict bad"><span class="label">Para mejorar</span>
+    <figure><img src="img/hapi-tipos.jpg" alt="Tipos de celebración" loading="lazy"></figure>
+    <p class="why"><b>Ocho tarjetas que parecen botones y no llevan a ningún lado.</b> Podrían abrir un ejemplo o una cotización de ese tipo de evento.</p>
+  </div>
+  <div class="cols">
+    <div class="col plus"><h3>Lo que nos aporta</h3><ul><li>El mejor ejemplo de confianza para empresas.</li><li>Carta de referencia sin precios.</li><li>Botón de cotizar siempre visible.</li><li>Cajas con la marca del cliente.</li></ul></div>
+    <div class="col minus"><h3>Lo que no nos sirve</h3><ul><li>No vende a personas en el día a día.</li><li>Ningún precio de referencia.</li><li>Tarjetas decorativas.</li></ul></div>
+  </div>
+</article>
+
+<article class="ficha" id="fuel">
+  <div class="ficha-head">
+    <h2><span class="n">7</span>Fuel Bar</h2>
+    <div class="tags"><span class="tag">Servicio para eventos · Lima</span><span class="tag">Eventos y empresas</span><span class="tag pay">Sin carrito · se cotiza</span><a class="tag" href="https://fuelbar.pe/">fuelbar.pe</a></div>
+  </div>
+  <figure><img src="img/fuelbar.png" alt="Portada de Fuel Bar" loading="lazy"><figcaption>Portada: una tarjeta sin producto ni fotos.</figcaption></figure>
+  <div class="block"><h3>Enfoque</h3><p>"Open bar sobre ruedas": barra móvil con cócteles, mocktails, café, smoothies y frappés, para bodas, fiestas y empresas.</p></div>
+  <div class="block"><h3>Cómo vende</h3><p>No publica precios ni paquetes. Se cotiza por WhatsApp o correo, y tiene un acceso para organizadores de eventos.</p></div>
+  <div class="verdict good"><span class="label">Bien hecho</span>
+    <figure><img src="img/fuel-testimonios.jpg" alt="Testimonios" loading="lazy"></figure>
+    <p class="why"><b>Testimonios con foto, nombre y tipo de evento,</b> cada uno con un detalle concreto.</p>
+  </div>
+  <div class="verdict bad"><span class="label">Para mejorar</span>
+    <figure><img src="img/fuel-carta.jpg" alt="Nuestra carta sin contenido" loading="lazy"></figure>
+    <p class="why"><b>"Nuestra carta" no es una carta:</b> tres fotos sin bebidas, ingredientes ni precios.</p>
+    <figure><img src="img/fuel-pronto.jpg" alt="Video con pantalla Muy pronto" loading="lazy"></figure>
+    <p class="why"><b>Un video de televisión de 7 minutos con "Muy pronto" de portada:</b> parece contenido sin terminar.</p>
+  </div>
+  <div class="cols">
+    <div class="col plus"><h3>Lo que nos aporta</h3><ul><li>Mocktails y barras sin alcohol para eventos.</li><li>Promesas concretas: personal propio, puntualidad.</li><li>Alianza con organizadores de eventos.</li></ul></div>
+    <div class="col minus"><h3>Lo que no nos sirve</h3><ul><li>Una portada sin producto.</li><li>Una carta vacía.</li><li>Videos largos o sin terminar.</li></ul></div>
+  </div>
+</article>
+
+<article class="ficha" id="delicias">
+  <div class="ficha-head">
+    <h2><span class="n">8</span>Delicias Ali</h2>
+    <div class="tags"><span class="tag">Catering corporativo · Lima</span><span class="tag">Empresas</span><span class="tag pay">Sin carrito · se cotiza</span><a class="tag" href="https://deliciasali.com/coffee-break-corporativo/">deliciasali.com</a></div>
+  </div>
+  <figure><img src="img/deliciasali.png" alt="Página de coffee break" loading="lazy"><figcaption>Página de coffee break corporativo.</figcaption></figure>
+  <div class="block"><h3>Enfoque</h3><p>Catering para empresas: coffee break, box lunch, cóctel y estación de bebidas.</p></div>
+  <div class="block"><h3>Cómo vende</h3><p>Cuatro paquetes sin precio publicado. Todos incluyen hasta 4 horas de servicio, el logo de la empresa, montaje y factura. Mínimo 20 personas, 4 días de anticipación, más de 40 distritos. Cada paquete se cotiza por WhatsApp.</p></div>
+  <div class="verdict good"><span class="label">Bien hecho</span>
+    <figure><img src="img/delicias-paquetes.jpg" alt="Paquetes de coffee break" loading="lazy"></figure>
+    <p class="why"><b>Paquetes comparables de un vistazo,</b> con "Más pedido" y una franja con lo que incluyen todos. El formato a copiar para packs corporativos.</p>
+    <figure><img src="img/delicias-faq.jpg" alt="Preguntas frecuentes y guías" loading="lazy"></figure>
+    <p class="why"><b>Preguntas frecuentes para empresas y guías</b> que atraen visitas desde Google.</p>
+  </div>
+  <div class="verdict bad"><span class="label">Para mejorar</span>
+    <figure><img src="img/delicias-otros.jpg" alt="Otros servicios" loading="lazy"></figure>
+    <p class="why"><b>"Otros servicios" mezcla de todo,</b> desde choripán hasta alquiler de pantallas, y la marca pierde foco.</p>
+  </div>
+  <div class="cols">
+    <div class="col plus"><h3>Lo que nos aporta</h3><ul><li>Reglas claras: mínimo, anticipación, zonas, factura.</li><li>Paquetes con nombre.</li><li>FAQ y guías para Google.</li><li>El logo de la empresa como parte del servicio.</li></ul></div>
+    <div class="col minus"><h3>Lo que no nos sirve</h3><ul><li>Sin precio de referencia.</li><li>Mezclar catering con alquiler de equipos.</li><li>Nada para personas.</li></ul></div>
+  </div>
+</article>
+
+<article class="ficha" id="desayunos">
+  <div class="ficha-head">
+    <h2><span class="n">9</span>Desayunos Perú</h2>
+    <div class="tags"><span class="tag">Tienda de regalos · Lima</span><span class="tag">Personas y empresas</span><span class="tag pay">Carrito · cobro no confirmado</span><a class="tag" href="https://www.desayunos.com.pe/">desayunos.com.pe</a></div>
+  </div>
+  <figure><img src="img/desayunos.png" alt="Portada de Desayunos Perú" loading="lazy"><figcaption>Portada.</figcaption></figure>
+  <div class="block"><h3>Enfoque</h3><p>Desayunos sorpresa, boxes y regalos a domicilio, vendidos por ocasión y temporada.</p></div>
+  <div class="block"><h3>Cómo vende</h3><p>Productos de S/ 67 a S/ 194, siempre con un precio "normal" tachado. Box corporativo para 6 personas a S/ 120. Carrito propio y WhatsApp; no se pudo confirmar si cobra con tarjeta.</p></div>
+  <div class="verdict good"><span class="label">Bien hecho</span>
+    <p class="why"><b>El aviso de "Envíos urgentes"</b> resuelve una necesidad real: el regalo de último momento.</p>
+  </div>
+  <div class="verdict bad"><span class="label">Para mejorar</span>
+    <figure><img src="img/desayunos-arriba.jpg" alt="Parte superior recargada" loading="lazy"></figure>
+    <p class="why"><b>Demasiada información compitiendo,</b> títulos escritos para Google en lugar de nombres, códigos internos visibles y descuentos permanentes.</p>
+    <figure><img src="img/desayunos-grillas.jpg" alt="Grillas de tortas" loading="lazy"></figure>
+    <p class="why"><b>Grillas interminables de productos ajenos al negocio principal.</b></p>
+  </div>
+  <div class="cols">
+    <div class="col plus"><h3>Lo que nos aporta</h3><ul><li>Vender por ocasión y temporada.</li><li>Un precio publicado para empresas.</li><li>Entregas urgentes.</li></ul></div>
+    <div class="col minus"><h3>Lo que no nos sirve</h3><ul><li>Diseño recargado y anticuado.</li><li>Descuentos permanentes.</li><li>Títulos para Google, no para personas.</li></ul></div>
+  </div>
+</article>
+
+<article class="ficha" id="piscos">
+  <div class="ficha-head">
+    <h2><span class="n">10</span>Piscos Personalizados</h2>
+    <div class="tags"><span class="tag">Regalos personalizados · Lima</span><span class="tag">Personas y empresas</span><span class="tag pay">Sin carrito · se cotiza</span><a class="tag" href="https://piscospersonalizados.com/">piscospersonalizados.com</a></div>
+  </div>
+  <figure><img src="img/piscos.png" alt="Portada de Piscos Personalizados" loading="lazy"><figcaption>Portada.</figcaption></figure>
+  <div class="block"><h3>Enfoque</h3><p>Piscos, vinos y botellas con logo o dedicatoria. La portada le habla primero a las empresas.</p></div>
+  <div class="block"><h3>Cómo vende</h3><p>No publica precios. El diseño se aprueba por WhatsApp con asesoras, y también hay un formulario. Botellas en 4 tamaños, de 50 a 500 ml.</p></div>
+  <div class="verdict good"><span class="label">Bien hecho</span>
+    <figure><img src="img/piscos-logos.jpg" alt="Logos de clientes" loading="lazy"></figure>
+    <p class="why"><b>Logos de clientes muy conocidos:</b> Toyota, Microsoft, La Positiva.</p>
+    <figure><img src="img/piscos-form.jpg" alt="Formulario de cotización" loading="lazy"></figure>
+    <p class="why"><b>Formulario de cotización corto</b> apenas termina la portada.</p>
+  </div>
+  <div class="verdict bad"><span class="label">Para mejorar</span>
+    <figure><img src="img/piscos-texto.jpg" alt="Bloque con error de tipeo" loading="lazy"></figure>
+    <p class="why"><b>El título habla de empresas pero las botellas son de una boda,</b> el texto es genérico y tiene un error de tipeo visible ("ermiten").</p>
+  </div>
+  <div class="cols">
+    <div class="col plus"><h3>Lo que nos aporta</h3><ul><li>Personalización mostrada con ejemplos reales.</li><li>Tamaños para cada presupuesto.</li><li>"Aprueba tu diseño por WhatsApp" en una frase.</li><li>Menú por fecha para campañas.</li></ul></div>
+    <div class="col minus"><h3>Lo que no nos sirve</h3><ul><li>Ningún precio.</li><li>Textos largos sin revisar.</li><li>Producto con alcohol: otro público y otras reglas.</li></ul></div>
+  </div>
+</article>
+
+<section id="oportunidades">
+  <span class="eyebrow">Qué hacemos con esto</span>
+  <h2>Oportunidades para la marca</h2>
+  <div class="tablebox"><table>
+    <thead><tr><th>#</th><th>Recomendación</th><th>Por qué</th><th>Ejemplo a seguir</th></tr></thead>
+    <tbody>
+      <tr><td>1</td><td>Bebidas propias para personas y un servicio claro para empresas</td><td>Solo Purtuá lo hace</td><td>Purtuá, Hapi Coffee</td></tr>
+      <tr><td>2</td><td>Precios visibles: por bebida, por pack y "desde" para empresas</td><td>4 de 10 no publican ningún precio y Purtuá los esconde fuera de la portada</td><td>OMC!, Desayunos Perú</td></tr>
+      <tr><td>3</td><td>Sección de empresas con reglas claras</td><td>Las empresas necesitan justificar la compra</td><td>Delicias Ali</td></tr>
+      <tr><td>4</td><td>Prueba social desde el día uno</td><td>Solo 4 de 10 la muestran</td><td>Hapi Coffee, Piscos Personalizados</td></tr>
+      <tr><td>5</td><td>Catálogo por línea y por ocasión</td><td>Con muchos productos, ayuda a encontrar rápido</td><td>Desayunos Perú, Piscos Personalizados</td></tr>
+      <tr><td>6</td><td>Empezar con carrito + Yape y sumar pasarela después</td><td>Yape no cobra comisión; la pasarela confirma sola pero cobra por venta</td><td>Purtuá, Veda, El Munkin</td></tr>
+      <tr><td>7</td><td>Envío gratis desde un monto, siempre visible</td><td>Empuja a sumar una bebida más</td><td>Veda</td></tr>
+      <tr><td>8</td><td>Preguntas frecuentes y páginas para Google</td><td>Solo 4 tienen FAQ y 3 publican guías</td><td>Delicias Ali, OMC!</td></tr>
+      <tr><td>9</td><td>Preparar la campaña de fin de año</td><td>La mitad de los regalos corporativos cae entre octubre y diciembre</td><td>BigBox</td></tr>
+      <tr><td>10</td><td>Identidad visual propia</td><td>Beige y serif (Purtuá) y rojo con negro (OMC!) ya están tomados</td><td>—</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<section id="faltan">
+  <span class="eyebrow">Pendiente</span>
+  <h2>Datos que faltan y cómo conseguirlos</h2>
+  <ul class="checklist">
+    <li>Precios para empresas: pedir cotización a Purtuá, OMC!, Hapi Coffee y Delicias Ali para un evento de 50 personas.</li>
+    <li>Tiempo y calidad de respuesta por WhatsApp en esas mismas cotizaciones.</li>
+    <li>Cómo cobra Desayunos Perú.</li>
+    <li>Seguidores y tipo de contenido en Instagram y TikTok de cada marca.</li>
+    <li>Reseñas en Google Maps: cantidad, nota y quejas frecuentes.</li>
+    <li>Experiencia de compra en el celular.</li>
+    <li>Compra de prueba a Purtuá y OMC! para evaluar empaque y entrega.</li>
+  </ul>
+</section>
+
+<footer>
+  <span>Webs revisadas y capturadas el 19 de noviembre de 2026. Quedaron fuera La Detoxería y Ten Ren por alejarse del modelo.</span>
+</footer>
+</div>
+</body>
+</html>
